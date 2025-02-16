@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: splunk
+  labels:
+    app: splunk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: splunk
+  template:
+    metadata:
+      labels:
+        app: splunk
+    spec:
+      containers:
+        - name: splunk
+          image: splunk/splunk:latest
+          ports:
+            - containerPort: 8000   # Splunk Web UI
+            - containerPort: 8088   # HTTP Event Collector (HEC)
+            - containerPort: 9997   # Splunk Forwarder
+          env:
+            - name: SPLUNK_START_ARGS
+              value: "--accept-license"
+            - name: SPLUNK_PASSWORD
+              value: "Admin@123"   # Change this to a secure password
+          volumeMounts:
+            - name: splunk-storage
+              mountPath: /opt/splunk/var
+      volumes:
+        - name: splunk-storage
+          persistentVolumeClaim:
+            claimName: splunk-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+spec:
+  selector:
+    app: splunk
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: splunk-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
