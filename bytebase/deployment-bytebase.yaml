@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: PG_URL
-              value: 'postgresql://<<user>>:<<secret>>@<<host>>:<<port>>/<<dbname>>'
+              value: 'postgresql://admin:Admin1234@af453d0f7d7b24c48b14dced5793449b-1949374843.us-east-1.elb.amazonaws.com:5432/mydatabase'
           args:
             [
               '--data',

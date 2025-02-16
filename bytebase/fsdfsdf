@@ -1,0 +1,7 @@
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: ebs-claim
+      volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
